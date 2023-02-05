@@ -77,7 +77,10 @@ function viewJobs() {
 }
 
 function viewEmployee(){
-    let viewEmployee = `SELECT * FROM employee JOIN job ON employee.jobID = job.id `;
+    let viewEmployee = `SELECT e.id, e.firstname, e.lastname, job.title, department.name AS "dept name", job.salary, m.firstname AS manager FROM employee e ` +
+     ` JOIN job ON e.jobID = job.id` + 
+     ` JOIN department ON job.departmentID = department.id` +
+     ` LEFT OUTER JOIN employee AS m ON e.managerID = m.id`;
     connection.query(viewEmployee, (error, results) => {
         if (error) {
             return console.error(error.message);

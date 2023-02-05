@@ -6,12 +6,13 @@ VALUES ("HR"),
        ("Customer Service");
 
 INSERT INTO job (salary, title, departmentID)
-VALUES (100000, "Human Resource Manager", 1),
+VALUES (100000, "Human Resources", 1),
         (110000, "Accountant", 2),
         (120000, "Engineer", 3),
         (130000, "Programmer", 4),
         (140000, "Customer Relations Specialist", 5),
-        (5000, "Manager", 6);
+        (5000, "Account Manager", 2),
+        (5000, "HR Manager", 1);
 
 INSERT INTO employee (firstname, lastname, jobID, managerID)
 VALUES ("Bruce", "Wayne", 1, 7),
@@ -21,4 +22,4 @@ VALUES ("Bruce", "Wayne", 1, 7),
         ("Tony", "Stark", 5, 8),
         ("Steven", "Rogers", 1, 7),
         ("Clint", "Barton", 6, NULL),
-        ("Scott", "Summers", 6, NULL);
+        ("Scott", "Summers", 7, NULL);
