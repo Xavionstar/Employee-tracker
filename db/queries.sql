@@ -1,0 +1,1 @@
+SELECT * FROM employeetracker_db.department;
