@@ -117,9 +117,7 @@ function firstQuestions() {
         }
         else if (answers.initQuestions === "Add a Department") {
             inquirer.prompt(deptQuestions).then((answers) => {
-                console.log(answers)
-                addDept(answers)
-                viewDept()
+              addDept(answers)
             })
         }
         else if (answers.initQuestions === "Add a Job") {
@@ -132,6 +130,15 @@ function firstQuestions() {
         }
         else if (answers.initQuestions === "Update an Employee") {
             updateEmployee(answers)
+
+        }
+        else if (answers.initQuestions === "Quit") {
+            connection.end(function(err) {
+                if (err) {
+                  return console.log('error:' + err.message);
+                }
+                console.log('Have a nice Day!');
+              });
 
         }
     })
@@ -188,17 +195,6 @@ function addDept(answers) {
     })
 }
 
-function insertJob(answers, results) {
-    let departmentID = results.find(result => result.name = answers.jobAddDept).id
-    let addJob = `INSERT INTO job (salary, title, departmentID ) VALUES ("${answers.jobAddSalary}", "${answers.jobAddName}", "${departmentID}")`;
-    connection.query(addJob, (error) => {
-        if (error) {
-            return console.error(error.message);
-        }
-        viewJobs()
-    })
-}
-
 function addJob() {
     let addDeptChoices = `SELECT * FROM department`;
     connection.query(addDeptChoices, (error, results) => {
@@ -212,6 +208,17 @@ function addJob() {
         })
     })
 }
+function insertJob(answers, results) {
+    let departmentID = results.find(result => result.name = answers.jobAddDept).id
+    let addJob = `INSERT INTO job (salary, title, departmentID ) VALUES ("${answers.jobAddSalary}", "${answers.jobAddName}", "${departmentID}")`;
+    connection.query(addJob, (error) => {
+        if (error) {
+            return console.error(error.message);
+        }
+        viewJobs()
+    })
+}
+
 
 function insertEmployee(answers, empResults, jobResults) {
     let jobID = jobResults.find(result => result.title === answers.addEmpJob).id
@@ -244,7 +251,7 @@ function addEmployee() {
             inquirer.prompt(employeeQuestions).then((answers) => {
                 insertEmployee(answers, empResults, jobResults)
             })
-            
+
         })
 
 
@@ -258,14 +265,34 @@ function addEmployee() {
 
 function updateEmployee() {
     let empNameData = `SELECT firstname, id FROM employee`;
-    connection.query(empNameData, (error, results) => {
+    connection.query(empNameData, (error, eResults) => {
         if (error) {
             return console.error(error.message);
         }
-        updateQuestions[0].choices = results.map(employee => employee.firstname);
+        updateQuestions[0].choices = eResults.map(employee => employee.firstname);
 
-        inquirer.prompt(updateQuestions).then((answers) => {
-            insertEmployee(answers,results)
+        let jobTitleData = `SELECT title, id FROM job`;
+        connection.query(jobTitleData, (error, jResults) => {
+            if (error) {
+                return console.error(error.message);
+            }
+            updateQuestions[1].choices = jResults.map(job => job.title);
+
+            inquirer.prompt(updateQuestions).then((answers) => {
+                updateEmpJob(answers, jResults)
+            })
         })
-})
+
+
+    })
+}
+function updateEmpJob(answers, jResults) {
+    const jobID = jResults.find(result => result.title === answers.empUpdateJob).id
+    let changeEmployee = `UPDATE employee SET jobID = "${jobID}" WHERE firstname = "${answers.empUpdateName}"`;
+    connection.query(changeEmployee, (error) => {
+        if (error) {
+            return console.error(error.message);
+        }
+        viewEmployee()
+    })
 }
