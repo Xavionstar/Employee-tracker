@@ -11,8 +11,8 @@ VALUES (100000, "Human Resources", 1),
         (120000, "Engineer", 3),
         (130000, "Programmer", 4),
         (140000, "Customer Relations Specialist", 5),
-        (5000, "Account Manager", 2),
-        (5000, "HR Manager", 1);
+        (5000, "Team Manager", 2),
+        (5000, "General Manager", 1);
 
 INSERT INTO employee (firstname, lastname, jobID, managerID)
 VALUES ("Bruce", "Wayne", 1, 7),
