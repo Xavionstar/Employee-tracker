@@ -10,4 +10,4 @@ https://github.com/Xavionstar/Employee-tracker
 Lincoln WInter Pough, Mysql Master
 
 ## Video Walkthru
-
+https://drive.google.com/file/d/1HQAul6SJnnL3C8o6zDyH-TGV3gHqiEbE/view
