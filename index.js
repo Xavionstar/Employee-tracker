@@ -1,28 +1,32 @@
+import * as dotenv from 'dotenv'
+dotenv.config();
+
 import cTable from 'console.table';
+
 import mysql2 from 'mysql2';
 import inquirer from 'inquirer';
-import fs from 'fs';
-// import {firstQuestions} from './questions.js';
 
+
+//This establishes the connection to the DB
 const connection = mysql2.createConnection(
     {
         host: 'localhost',
         user: 'root',
-        password: 'Scottsummers1!',
-        database: 'employeetracker_db'
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME
     },
     console.log()
 );
-
+//This is the initial function that opens the connection to the database and runs the main function
 connection.connect(function (err) {
     if (err) {
         return console.error('error: ' + err.message);
     }
-    firstQuestions()
-    console.log();
+    firstQuestions();
+    
 });
 
-
+//These are the question loops that prompt the user
 const initQuestions = [
 
     {
@@ -102,10 +106,9 @@ const updateQuestions = [
     },
 ]
 
-
+//This is the main method that has all of the sections of code that pull answers from and update the database
 function firstQuestions() {
     return inquirer.prompt(initQuestions).then((answers) => {
-        console.log(answers)
         if (answers.initQuestions === "View All Departments") {
             viewDept()
         }
@@ -146,7 +149,7 @@ function firstQuestions() {
 }
 
 
-
+//This function shows the database table for departments
 function viewDept() {
     let viewDept = `SELECT * FROM department`;
     connection.query(viewDept, (error, results) => {
@@ -158,7 +161,7 @@ function viewDept() {
     });
 }
 
-
+//This function shows the database table for jobs
 function viewJobs() {
     let viewJobs = `SELECT * FROM job`;
     connection.query(viewJobs, (error, results) => {
@@ -169,7 +172,7 @@ function viewJobs() {
         firstQuestions()
     })
 }
-
+//This function shows the database table for employees
 function viewEmployee() {
     let viewEmployee = `SELECT e.id, e.firstname, e.lastname, job.title, department.name AS "dept name", job.salary, m.firstname AS manager FROM employee e ` +
         ` JOIN job ON e.jobID = job.id` +
@@ -183,7 +186,7 @@ function viewEmployee() {
         firstQuestions()
     });
 }
-
+//This function allows the user to add departments to the company
 function addDept(answers) {
 
     let addDept = `INSERT INTO department (name) VALUES ("${answers.deptName}")`;
@@ -194,7 +197,7 @@ function addDept(answers) {
         viewDept()
     })
 }
-
+//This function allows the user to add jobs to the company
 function addJob() {
     let addDeptChoices = `SELECT * FROM department`;
     connection.query(addDeptChoices, (error, results) => {
@@ -208,6 +211,7 @@ function addJob() {
         })
     })
 }
+//This function works in tandem with the addjob function to take in the answers from the user prompts and insert all of the matching table columns
 function insertJob(answers, results) {
     let departmentID = results.find(result => result.name = answers.jobAddDept).id
     let addJob = `INSERT INTO job (salary, title, departmentID ) VALUES ("${answers.jobAddSalary}", "${answers.jobAddName}", "${departmentID}")`;
@@ -219,19 +223,7 @@ function insertJob(answers, results) {
     })
 }
 
-
-function insertEmployee(answers, empResults, jobResults) {
-    let jobID = jobResults.find(result => result.title === answers.addEmpJob).id
-    let mgrID = empResults.find(result => result.firstname === answers.addEmpManager).id
-    let addEmployee = `INSERT INTO employee (firstname, lastname, jobID, managerID) VALUES ("${answers.addEmpFirstName}", "${answers.addEmpLastName}", "${jobID}", "${mgrID}")`;
-    connection.query(addEmployee, (error) => {
-        if (error) {
-            return console.error(error.message);
-        }
-        viewEmployee()
-    })
-}
-
+//This function allows the user to add employees to the company
 function addEmployee() {
     let jobTitleData = `SELECT title, id FROM job`;
     connection.query(jobTitleData, (error, jobResults) => {
@@ -254,15 +246,22 @@ function addEmployee() {
 
         })
 
-
-
-
-
-
-        //
+//This function is a more complex version of insertjob, it takes in results from user prompts and then works with addemployee to fill all of the columns
+function insertEmployee(answers, empResults, jobResults) {
+    let jobID = jobResults.find(result => result.title === answers.addEmpJob).id
+    let mgrID = empResults.find(result => result.firstname === answers.addEmpManager).id
+    let addEmployee = `INSERT INTO employee (firstname, lastname, jobID, managerID) VALUES ("${answers.addEmpFirstName}", "${answers.addEmpLastName}", "${jobID}", "${mgrID}")`;
+    connection.query(addEmployee, (error) => {
+        if (error) {
+            return console.error(error.message);
+        }
+        viewEmployee()
+    })
+}
     })
 }
 
+//This function allows the user to make changes to existing employees
 function updateEmployee() {
     let empNameData = `SELECT firstname, id FROM employee`;
     connection.query(empNameData, (error, eResults) => {
@@ -286,6 +285,8 @@ function updateEmployee() {
 
     })
 }
+
+//This function works with updateEmployee function to fill in all of the employees new column data
 function updateEmpJob(answers, jResults) {
     const jobID = jResults.find(result => result.title === answers.empUpdateJob).id
     let changeEmployee = `UPDATE employee SET jobID = "${jobID}" WHERE firstname = "${answers.empUpdateName}"`;

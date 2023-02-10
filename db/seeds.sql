@@ -1,18 +1,18 @@
 INSERT INTO department (name)
-VALUES ("HR"),
-       ("Accounting"),
-       ("Maintenance"),
-       ("IT"),
-       ("Customer Service");
+VALUES ("Dungeoneering"),
+       ("Ranging"),
+       ("Arcana"),
+       ("Swordplay"),
+       ("Subterfuge");
 
 INSERT INTO job (salary, title, departmentID)
-VALUES (100000, "Human Resources", 1),
-        (110000, "Accountant", 2),
-        (120000, "Engineer", 3),
-        (130000, "Programmer", 4),
-        (140000, "Customer Relations Specialist", 5),
-        (5000, "Team Manager", 2),
-        (5000, "General Manager", 1);
+VALUES (100000, "Fighter", 1),
+        (110000, "Wizard", 2),
+        (120000, "Rogue", 3),
+        (130000, "Paladin", 4),
+        (140000, "Barbarian", 5),
+        (5000, "Team Leader", 2),
+        (5000, "Guild Master", 1);
 
 INSERT INTO employee (firstname, lastname, jobID, managerID)
 VALUES ("Bruce", "Wayne", 1, 7),
